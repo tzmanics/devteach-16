@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Rapid Node Deployment</title>
+    <meta charset="utf-8">
+    <style>
+      @import url(https://fonts.googleapis.com/css?family=Roboto:100);
+      body { font-family: 'Roboto'; font-weight: 100; text-align: left; }
+      img { float: right; }
+      a { font-size: 55%; text-decoration: none; }
+      .remark-slide-content h1 { font-size: 400%; font-weight: 100; webkit-margin-after: 0; }
+      .remark-container, .remark-slide-content { padding: 0; background-color: #d7d8d2 }
+      .remark-slide-number { display: none; }
+      .title-image img { width: 75%; }
+      .left-block { width: 45%; float: left; }
+      .left-block img { width: 100%; padding-top: 40%; float: left; }
+      .right-block img { width: 55%; margin-top: -30px; }
+      .non-code { font-size: 300%; }
+      .code { font-family: 'Courier New'; font-size: 150%; }
+      .info-slide { padding: 5%; }
+      .info-slide img { width:55%; }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+---
+
+background-image: url(images/linkedIn.png)
+
+???
+SE @ Modulus a Progress Company
+I started in Java, technically I started with Logo
+
+---
+
+background-image: url(images/logo.png)
+
+???
+After learning JS for front-end work I got into Node
+
+---
+
+background-image: url(images/node-modulus.png)
+
+???
+I started at Modulus &amp; have been spoiled by the deployment process
+
+---
+
+1. API using hapi.js
+2. Website using React &amp; Webpack
+3. Set up MongoDB
+4. Deploy Project
+5. Scale, Look into Logs, etc. via CLI
+6. Metrics, Auto Scaling and more via UI
+
+???
+Today we'll start by making a quick api using hapi.js to show how to deploy a
+Node app.  Then we'll deploy the UI using react to show how to deploy a static
+site, specifically react/webpack.  After that we'll delve into the many
+benefits what else we get when deploying with modulus via the cli &amp; the UI.
+
+---
+
+API:
+  First we'll create a simple API uisng hapi.js
+
+Website:
+  I'm going to use a webpack file but not go into too much detail bc we have limited time.
+  Now we'll just make a home page that pulls in all of our objects.
+  In order to make this work with Modulus's nginx config we'll add this file.
+
+Sign up &amp; Create Projects:
+  We have all of our website &amp; API so we'll go ahead and sign up for Modulus via the cli
+  'npm i modulus -g'
+  'modulus sign up'
+  'modulus create project' // for the api
+  and again for the website
+
+  with these projects created we can deploy their respective files
+  go to api project directory and 'modulus project deploy'
+  then we can take the address of the api and update our website
+  once that is done we can go to the website directory and 'modulus project deploy'
+
+  then use 'modulus mongo create' // to make a db for the api
+  we use the provided mongo url to update our api code
+  then we just need to redploy the api code with the new changes
+
+Modulus CLI:
+  Now that the project is complete let's mess with it
+  First we'll scale our website up to 3 servos, just in case it gets popular
+  'modulus project scale 3'
+
+  We can also start, stop or just restart our project using
+  'modulus project start/stop/restart'
+
+  If we want to look at the servos that our project is running on
+  'modulus servo list'
+  Then we can either restart all of them with 'modulus servo restart'
+  Or restart a particular one with the flag '-i <SERVO-ID>
+
+  To see any output from the projects we can tail the logs
+  'modulus project logs tail'
+
+Modulus UI:
+  To look at more metrics &amp; set up auto-scaling we can move to the UI.
+  Metrics Tab, Do we need all of these servos?
+  Auto scaling change the servo based on memory, requests or cpu usageo
+  Need to look more in-depth into your logs you can download them here
+  Add webhooks to recieve project updates
+  Change anything even runtime on your administration page.
+
+---
+
+class: info-slide
+.non-code[
+Merci, DevTeach Montr&eacute;al!!
+
+Tara Z. Manicsic
+
+@tzmanics
+tara.manicsic@progress.com
+
+slides: [https://github.com/tzmanics/devteach-16](https://github.com/tzmanics/devteach-16) ]
+api: [https://github.com/tzmanics/devteach-16-api](https://github.com/tzmanics/devteach-16-api) ]
+website: [https://github.com/tzmanics/devteach-16-website](https://github.com/tzmanics/devteach-16-website) ]
+
+.right-block[![toshi-bark](images/toshi-bark.gif)]
+
+    </textarea>
+    <script src="https://gnab.github.io/remark/downloads/remark-latest.min.js">
+    </script>
+    <script>
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
