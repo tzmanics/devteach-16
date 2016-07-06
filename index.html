@@ -8,22 +8,39 @@
       body { font-family: 'Roboto'; font-weight: 100; text-align: left; }
       img { float: right; }
       a { font-size: 55%; text-decoration: none; }
-      .remark-slide-content h1 { font-size: 400%; font-weight: 100; webkit-margin-after: 0; }
+      ol { font-size: 240%; margin: 120px 0 0 55px; }
+      .remark-slide-content h1 {
+        font-size: 400%;
+        font-weight: 100;
+        webkit-margin-after: 0;
+        padding: 10px;
+      }
+      .remark-slide-content h3 { margin: 0; padding-right: 10px; text-align: right; }
+      .remark-slide-content h2 {
+        font-weight: bold;
+        font-size: 450%;
+        margin-bottom: 0;
+        padding: 20px;
+      }
       .remark-container, .remark-slide-content { padding: 0; background-color: #d7d8d2 }
       .remark-slide-number { display: none; }
       .title-image img { width: 75%; }
-      .left-block { width: 45%; float: left; }
+      .left-block { width: 40%; float: left; padding-left: 20px;}
       .left-block img { width: 100%; padding-top: 40%; float: left; }
+      .left-block p { font-size: 125%; }
       .right-block img { width: 55%; margin-top: -30px; }
-      .non-code { font-size: 300%; }
       .code { font-family: 'Courier New'; font-size: 150%; }
-      .info-slide { padding: 5%; }
-      .info-slide img { width:55%; }
+      .non-live-demo img { width: 67%; margin-right: 155px; }
+      .fit h1 { margin: 0 }
     </style>
   </head>
   <body>
     <textarea id="source">
 
+Rapid Deployment &amp; Auto-scaling for your Node Apps
+===============================
+###Tara Z. Manicsic - @tzmanics
+###SE @ Modulus/Progress Software
 ---
 
 background-image: url(images/linkedIn.png)
@@ -63,68 +80,176 @@ benefits what else we get when deploying with modulus via the cli &amp; the UI.
 
 ---
 
-API:
-  First we'll create a simple API uisng hapi.js
-
-Website:
-  I'm going to use a webpack file but not go into too much detail bc we have limited time.
-  Now we'll just make a home page that pulls in all of our objects.
-  In order to make this work with Modulus's nginx config we'll add this file.
-
-Sign up &amp; Create Projects:
-  We have all of our website &amp; API so we'll go ahead and sign up for Modulus via the cli
-  'npm i modulus -g'
-  'modulus sign up'
-  'modulus create project' // for the api
-  and again for the website
-
-  with these projects created we can deploy their respective files
-  go to api project directory and 'modulus project deploy'
-  then we can take the address of the api and update our website
-  once that is done we can go to the website directory and 'modulus project deploy'
-
-  then use 'modulus mongo create' // to make a db for the api
-  we use the provided mongo url to update our api code
-  then we just need to redploy the api code with the new changes
-
-Modulus CLI:
-  Now that the project is complete let's mess with it
-  First we'll scale our website up to 3 servos, just in case it gets popular
-  'modulus project scale 3'
-
-  We can also start, stop or just restart our project using
-  'modulus project start/stop/restart'
-
-  If we want to look at the servos that our project is running on
-  'modulus servo list'
-  Then we can either restart all of them with 'modulus servo restart'
-  Or restart a particular one with the flag '-i <SERVO-ID>
-
-  To see any output from the projects we can tail the logs
-  'modulus project logs tail'
-
-Modulus UI:
-  To look at more metrics &amp; set up auto-scaling we can move to the UI.
-  Metrics Tab, Do we need all of these servos?
-  Auto scaling change the servo based on memory, requests or cpu usageo
-  Need to look more in-depth into your logs you can download them here
-  Add webhooks to recieve project updates
-  Change anything even runtime on your administration page.
+##API:
+#First we'll create a simple API uisng hapi.js &amp; MongoDB
 
 ---
 
-class: info-slide
-.non-code[
-Merci, DevTeach Montr&eacute;al!!
+##Website:
+#Using Webpack &amp; React we'll make a UI to display our items.
 
-Tara Z. Manicsic
+???
+I'm going to use a webpack file but not go into too much detail bc we have
+limited time. Now we'll just make a home page that pulls in all of our items.
+In order to work with the nginx config we will add this `sites-enabled` config
+file which we'll copy into the public dir after we've built the website.
 
-@tzmanics
-tara.manicsic@progress.com
+---
 
-slides: [https://github.com/tzmanics/devteach-16](https://github.com/tzmanics/devteach-16) ]
-api: [https://github.com/tzmanics/devteach-16-api](https://github.com/tzmanics/devteach-16-api) ]
-website: [https://github.com/tzmanics/devteach-16-website](https://github.com/tzmanics/devteach-16-website) ]
+#First, we install the Modulus CLI
+```shell
+npm i modulus -g
+```
+.non-live-demo[![install](images/install.png)]
+
+---
+
+#Sign up for an account
+```shell
+modulus sign up
+```
+.non-live-demo[![signup](images/signup.png)]
+
+---
+
+#&amp; Create Projects
+```shell
+modulus create project // for the api &amp; website
+```
+.non-live-demo[![create-project](images/create-project.png)]
+
+???
+We have our website &amp; API so we'll go ahead and sign up for Modulus via the cli
+
+---
+
+#Create Mongo Database &amp; User
+```bash
+modulus mongo create
+modulus mongo user create
+```
+.non-live-demo[![mongo-create](images/mongo-create.png)]
+
+???
+we use the provided mongo url to update our api code
+
+---
+
+#Set custom URLs &amp; Website Files
+  - project/Administration
+  - update `sites-enabled/config`
+  - update API url
+
+.non-live-demo[![admin](images/admin.png)]
+
+---
+
+#Deploying the Projects:
+```bash
+modulus deploy // from the project directory
+modulus deploy /path/to/project/dir // from anywhere
+```
+.non-live-demo[![deploy](images/deploy.png)]
+
+---
+
+.fit[
+  #Modulus CLI:
+]
+  - scale the project
+    ```bash
+      modulus project scale 3
+    ```
+  - stop, start or restart the project
+    ```bash
+      modulus project <stop|start|restart>
+    ```
+  - get a list of the servos your project is running on
+    ```bash
+      modulus servo list
+    ```
+  - restart all or individual servos
+    ```bash
+      modulus servo restart
+      modulus servo restart -i <SERVO-ID>
+    ```
+  - tail project logs
+    ```bash
+      modulus project logs tail
+    ```
+
+???
+Now that the project is complete let's mess with it
+
+---
+
+#The Modulus CLI is open-source, feel free to contribute or add feature requests!
+###[https://github.com/onmodulus/modulus-cli](https://github.com/onmodulus/modulus-cli)
+
+---
+
+#Modulus UI:
+  1. set up auto-scaling
+  2. view project &amp; metrics
+  3. notifications &amp; logs
+
+???
+To look at more metrics &amp; set up auto-scaling we can move to the UI.
+Metrics Tab, Do we need all of these servos?
+Auto scaling change the servo based on memory, requests or cpu usageo
+Need to look more in-depth into your logs you can download them here
+Add webhooks to recieve project updates
+
+---
+
+#scale the project
+.non-live-demo[![scale](images/scale.png)]
+
+---
+
+#stop/start/restart the project
+.non-live-demo[![ssr](images/ssr.png)]
+
+---
+
+#get project's servo list &amp; restart servos
+.non-live-demo[![servos](images/servos.png)]
+
+---
+
+#tail project logs
+.non-live-demo[![logs](images/cli-logs.png)]
+
+---
+
+#set up project auto-scaling
+.non-live-demo[![auto-scale](images/auto-scaling.png)]
+
+---
+
+#view project metrics
+.non-live-demo[![metrics](images/metrics.png)]
+
+---
+
+#download project logs
+.non-live-demo[![ui-logs](images/ui-logs.png)]
+
+---
+
+.left-block[
+  Merci, DevTeach Montr&eacute;al!!
+
+  Tara Z. Manicsic
+
+  @tzmanics
+
+  slides: [https://github.com/tzmanics/devteach-16](https://github.com/tzmanics/devteach-16)
+
+  api: [https://github.com/tzmanics/devteach-16-api](https://github.com/tzmanics/devteach-16-api)
+
+  website: [https://github.com/tzmanics/devteach-16-website](https://github.com/tzmanics/devteach-16-website)
+]
 
 .right-block[![toshi-bark](images/toshi-bark.gif)]
 
